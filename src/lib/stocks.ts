@@ -190,12 +190,12 @@ export const SIGNAL_ORDER: Record<Signal, number> = { LONG: 0, WATCH: 1, NEUTRAL
 export function signalClasses(signal: Signal) {
   switch (signal) {
     case "LONG":
-      return "bg-emerald-500/15 text-emerald-400 border-emerald-500/30";
+      return "bg-success/15 text-success border-success/30";
     case "WATCH":
-      return "bg-amber-500/15 text-amber-400 border-amber-500/30";
+      return "bg-warning/15 text-warning border-warning/30";
     case "AVOID":
-      return "bg-red-500/15 text-red-400 border-red-500/30";
+      return "bg-destructive/15 text-destructive border-destructive/30";
     default:
-      return "bg-slate-500/15 text-slate-300 border-slate-500/30";
+      return "bg-muted text-muted-foreground border-border";
   }
 }
