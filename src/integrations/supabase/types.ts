@@ -14,7 +14,75 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      ai_analysis: {
+        Row: {
+          created_at: string
+          id: string
+          payload: Json
+          symbol: string
+          trade_date: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          payload: Json
+          symbol: string
+          trade_date?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          payload?: Json
+          symbol?: string
+          trade_date?: string
+        }
+        Relationships: []
+      }
+      analysis_history: {
+        Row: {
+          created_at: string
+          entry: number | null
+          horizon: string | null
+          id: string
+          price: number
+          r_multiple: number | null
+          signal: string
+          stop_loss: number | null
+          symbol: string
+          take_profit: number | null
+          trade_date: string
+          upside_pct: number | null
+        }
+        Insert: {
+          created_at?: string
+          entry?: number | null
+          horizon?: string | null
+          id?: string
+          price: number
+          r_multiple?: number | null
+          signal: string
+          stop_loss?: number | null
+          symbol: string
+          take_profit?: number | null
+          trade_date?: string
+          upside_pct?: number | null
+        }
+        Update: {
+          created_at?: string
+          entry?: number | null
+          horizon?: string | null
+          id?: string
+          price?: number
+          r_multiple?: number | null
+          signal?: string
+          stop_loss?: number | null
+          symbol?: string
+          take_profit?: number | null
+          trade_date?: string
+          upside_pct?: number | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
