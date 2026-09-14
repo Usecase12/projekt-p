@@ -10,15 +10,12 @@ export type DashboardData = {
 
 export const getDashboard = createServerFn({ method: "GET" }).handler(
   async (): Promise<DashboardData> => {
-    const { fetchChart } = await import("./market.server");
-    const results = await Promise.all(
-      UNIVERSE.map(async (s) => {
-        const chart = await fetchChart(s.symbol, "2y");
-        if (!chart) return null;
-        return analyse(s.symbol, chart.candles, chart.price, chart.changePct, chart.currency);
-      }),
+    const { fetchCharts } = await import("./market.server");
+    const charts = await fetchCharts(UNIVERSE.map((s) => s.symbol));
+    const results = charts.map((chart) =>
+      analyse(chart.symbol, chart.candles, chart.price, chart.changePct, chart.currency),
     );
-    const rows = results.filter((r): r is Analysis => r !== null);
+    const rows = results;
 
     // Daglig lagring: en rad per aktie och dag (idempotent).
     if (rows.length) {
@@ -59,7 +56,7 @@ export const getStock = createServerFn({ method: "GET" })
     const symbol = data.symbol.toUpperCase();
     const { fetchChart, fetchFundamentals } = await import("./market.server");
     const [chart, fundamentals] = await Promise.all([
-      fetchChart(symbol, "2y"),
+      fetchChart(symbol),
       fetchFundamentals(symbol),
     ]);
     if (!chart) throw new Error(`Ingen kursdata hittades för ${symbol}`);

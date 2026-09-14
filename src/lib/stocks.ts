@@ -63,7 +63,7 @@ export type Analysis = {
 export function sma(values: number[], period: number): number | null {
   if (values.length < period) return null;
   let sum = 0;
-  for (let i = values.length - period; i < values.length; i++) sum += values[i];
+  for (let i = values.length - period; i < values.length; i++) sum += values[i]!;
   return sum / period;
 }
 
@@ -72,7 +72,7 @@ export function rsi(values: number[], period = 14): number | null {
   let gain = 0;
   let loss = 0;
   for (let i = values.length - period; i < values.length; i++) {
-    const diff = values[i] - values[i - 1];
+    const diff = values[i]! - values[i - 1]!;
     if (diff >= 0) gain += diff;
     else loss -= diff;
   }
@@ -99,7 +99,7 @@ export function analyse(
   const meta = UNIVERSE_MAP.get(symbol) ?? { symbol, name: symbol, sector: "-" };
   const closes = candles.map((c) => c.c);
   const volumes = candles.map((c) => c.v);
-  const last = candles[candles.length - 1];
+  const last = candles[candles.length - 1]!;
   const prev = candles[candles.length - 2] ?? last;
 
   const s50 = sma(closes, 50);

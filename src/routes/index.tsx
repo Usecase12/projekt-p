@@ -42,7 +42,7 @@ function Dashboard() {
         <h1 className="text-xl font-semibold tracking-tight">Nasdaq 100 – dagens läge</h1>
         <p className="mt-1 text-sm text-muted-foreground">
           {rows.length} aktier analyserade · uppdaterad{" "}
-          {new Date(data.updatedAt).toLocaleString("sv-SE")}
+          {data.updatedAt.slice(0, 16).replace("T", " ")} UTC
         </p>
       </div>
 

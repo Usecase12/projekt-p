@@ -47,7 +47,7 @@ export function SignalBadge({ signal, className = "" }: { signal: string; classN
   };
   return (
     <span
-      className={`inline-flex items-center rounded border px-2 py-0.5 text-xs font-semibold ${map[signal] ?? map.NEUTRAL} ${className}`}
+      className={`inline-flex items-center rounded border px-2 py-0.5 text-xs font-semibold ${map[signal] ?? map['NEUTRAL']} ${className}`}
     >
       {signal}
     </span>
