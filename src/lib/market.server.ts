@@ -67,19 +67,52 @@ export type Fundamentals = {
   beta: number | null;
 };
 
+// Yahoo kräver cookie + crumb för fundamentaldata. Sessionen cachas.
+let session: { cookie: string; crumb: string; at: number } | null = null;
+
+async function getSession(): Promise<{ cookie: string; crumb: string } | null> {
+  if (session && Date.now() - session.at < 30 * 60 * 1000) return session;
+  try {
+    const res = await fetch("https://fc.yahoo.com", { headers: { "User-Agent": UA } });
+    const setCookie = res.headers.get("set-cookie") ?? "";
+    const cookie = setCookie.split(";")[0] ?? "";
+    if (!cookie) return null;
+    const crumbRes = await fetch("https://query1.finance.yahoo.com/v1/test/getcrumb", {
+      headers: { "User-Agent": UA, Cookie: cookie },
+    });
+    const crumb = (await crumbRes.text()).trim();
+    if (!crumb || crumb.length > 40) return null;
+    session = { cookie, crumb, at: Date.now() };
+    return session;
+  } catch {
+    return null;
+  }
+}
+
+const fundamentalsCache = new Map<string, { at: number; data: Fundamentals }>();
+
 export async function fetchFundamentals(symbol: string): Promise<Fundamentals | null> {
+  const cached = fundamentalsCache.get(symbol);
+  if (cached && Date.now() - cached.at < 6 * 60 * 60 * 1000) return cached.data;
+  const s = await getSession();
+  if (!s) return null;
   const modules = "summaryDetail,defaultKeyStatistics,financialData";
   const url = `https://query1.finance.yahoo.com/v10/finance/quoteSummary/${encodeURIComponent(
     symbol,
-  )}?modules=${modules}`;
+  )}?modules=${modules}&crumb=${encodeURIComponent(s.crumb)}`;
   try {
-    const res = await fetch(url, { headers: { "User-Agent": UA, Accept: "application/json" } });
-    if (!res.ok) return null;
+    const res = await fetch(url, {
+      headers: { "User-Agent": UA, Accept: "application/json", Cookie: s.cookie },
+    });
+    if (!res.ok) {
+      if (res.status === 401) session = null;
+      return null;
+    }
     const json = (await res.json()) as any;
     const r = json?.quoteSummary?.result?.[0];
     if (!r) return null;
     const raw = (v: any) => (typeof v?.raw === "number" ? v.raw : null);
-    return {
+    const data: Fundamentals = {
       marketCap: raw(r.summaryDetail?.marketCap),
       peForward: raw(r.summaryDetail?.forwardPE),
       peTrailing: raw(r.summaryDetail?.trailingPE),
@@ -89,25 +122,32 @@ export async function fetchFundamentals(symbol: string): Promise<Fundamentals | 
       targetMean: raw(r.financialData?.targetMeanPrice),
       beta: raw(r.summaryDetail?.beta),
     };
+    fundamentalsCache.set(symbol, { at: Date.now(), data });
+    return data;
   } catch {
     return null;
   }
 }
 
-/** Hämtar flera symboler med begränsad parallellitet och en retry vid rate limit (429). */
-export async function fetchCharts(symbols: string[], concurrency = 4): Promise<ChartData[]> {
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+/** Hämtar flera symboler med låg parallellitet och backoff, eftersom källan rate-limitar burst. */
+export async function fetchCharts(symbols: string[], concurrency = 3): Promise<ChartData[]> {
   const out: ChartData[] = [];
   const queue = [...symbols];
   const worker = async () => {
     while (queue.length) {
       const symbol = queue.shift();
       if (!symbol) break;
-      let chart = await fetchChart(symbol);
-      if (!chart) {
-        await new Promise((r) => setTimeout(r, 400));
-        chart = await fetchChart(symbol);
+      for (let attempt = 0; attempt < 4; attempt++) {
+        const chart = await fetchChart(symbol);
+        if (chart) {
+          out.push(chart);
+          break;
+        }
+        await sleep(300 * (attempt + 1));
       }
-      if (chart) out.push(chart);
+      await sleep(60);
     }
   };
   await Promise.all(Array.from({ length: Math.min(concurrency, symbols.length) }, worker));

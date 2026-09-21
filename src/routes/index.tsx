@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
 import { Card, Shell, SignalBadge } from "@/components/Shell";
 import { dashboardQuery } from "@/lib/queries";
@@ -21,13 +21,12 @@ export const Route = createFileRoute("/")({
       },
     ],
   }),
-  loader: ({ context }) => context.queryClient.ensureQueryData(dashboardQuery),
   component: Dashboard,
 });
 
 function Dashboard() {
-  const { data } = useSuspenseQuery(dashboardQuery);
-  const rows = [...data.rows].sort(
+  const { data, isLoading } = useQuery(dashboardQuery);
+  const rows = [...(data?.rows ?? [])].sort(
     (a, b) => SIGNAL_ORDER[a.signal] - SIGNAL_ORDER[b.signal] || b.r - a.r,
   );
   const counts = rows.reduce<Record<string, number>>((acc, r) => {
@@ -41,8 +40,9 @@ function Dashboard() {
       <div className="mb-5">
         <h1 className="text-xl font-semibold tracking-tight">Nasdaq 100 – dagens läge</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          {rows.length} aktier analyserade · uppdaterad{" "}
-          {data.updatedAt.slice(0, 16).replace("T", " ")} UTC
+          {isLoading
+            ? "Hämtar senaste kursnivåer…"
+            : `${rows.length} aktier analyserade · uppdaterad ${data ? data.updatedAt.slice(0, 16).replace("T", " ") : ""} UTC`}
         </p>
       </div>
 
@@ -75,6 +75,15 @@ function Dashboard() {
             </tr>
           </thead>
           <tbody>
+            {isLoading
+              ? Array.from({ length: 8 }).map((_, i) => (
+                  <tr key={i} className="border-b border-border/60">
+                    <td colSpan={13} className="px-3 py-3">
+                      <div className="h-4 w-full animate-pulse rounded bg-muted/60" />
+                    </td>
+                  </tr>
+                ))
+              : null}
             {rows.map((r) => (
               <tr key={r.symbol} className="border-b border-border/60 last:border-0 hover:bg-muted/40">
                 <td className="px-3 py-2">
