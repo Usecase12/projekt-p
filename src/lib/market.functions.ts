@@ -11,7 +11,9 @@ export type DashboardData = {
 export const getDashboard = createServerFn({ method: "GET" }).handler(
   async (): Promise<DashboardData> => {
     const { fetchCharts } = await import("./market.server");
+    const t0 = Date.now();
     const charts = await fetchCharts(UNIVERSE.map((s) => s.symbol));
+    console.log("[dash] charts", charts.length, Date.now() - t0, "ms");
     const results = charts.map((chart) =>
       analyse(chart.symbol, chart.candles, chart.price, chart.changePct, chart.currency),
     );
@@ -40,6 +42,7 @@ export const getDashboard = createServerFn({ method: "GET" }).handler(
       }
     }
 
+    console.log("[dash] klar", rows.length, Date.now() - t0, "ms");
     return { updatedAt: new Date().toISOString(), rows };
   },
 );

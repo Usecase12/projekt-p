@@ -67,31 +67,88 @@ export const getAiConsensus = createServerFn({ method: "POST" })
     const apiKey = process.env["LOVABLE_API_KEY"];
     if (!apiKey) throw new Error("AI är inte tillgängligt just nu.");
 
-    const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const res = await fetch("https://ai.gateway.lovable.dev/v1/responses", {
       method: "POST",
-      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "Lovable-API-Key": apiKey,
+        "X-Lovable-AIG-SDK": "fetch",
+      },
       body: JSON.stringify({
-        model: "google/gemini-3.8-flash",
-        messages: [
-          {
-            role: "system",
-            content:
-              "Du är ett AI-team för aktieanalys: Technical Analyst (P-strategi), Equity Research Analyst (fundamenta/värdering), Macro Strategist (marknad, sektor, makro), Risk Manager (risk, IN/SL/TP, R) och Portfolio Manager (sammanvägning). Svara på svenska, extremt koncist: max 2 meningar per roll. Svara ENDAST med JSON: {technical, research, macro, risk, verdict, conviction, summary}. verdict = LONG, WATCH, NEUTRAL eller AVOID. conviction = heltal 1-10. summary = en mening.",
+        model: "openai/gpt-6-astra",
+        stream: true,
+        reasoning: { effort: "low", summary: "auto" },
+        instructions:
+          "Du är ett AI-team för aktieanalys: Technical Analyst (P-strategi), Equity Research Analyst (fundamenta/värdering), Macro Strategist (marknad, sektor, makro), Risk Manager (risk, IN/SL/TP, R) och Portfolio Manager (sammanvägning). Svara på svenska, extremt koncist: max 2 meningar per roll. verdict = LONG, WATCH, NEUTRAL eller AVOID. conviction = heltal 1-10. summary = en mening.",
+        input: facts,
+        text: {
+          format: {
+            type: "json_schema",
+            name: "ai_consensus",
+            strict: true,
+            schema: {
+              type: "object",
+              additionalProperties: false,
+              properties: {
+                technical: { type: "string" },
+                research: { type: "string" },
+                macro: { type: "string" },
+                risk: { type: "string" },
+                verdict: { type: "string", enum: ["LONG", "WATCH", "NEUTRAL", "AVOID"] },
+                conviction: { type: "integer" },
+                summary: { type: "string" },
+              },
+              required: [
+                "technical",
+                "research",
+                "macro",
+                "risk",
+                "verdict",
+                "conviction",
+                "summary",
+              ],
+            },
           },
-          { role: "user", content: facts },
-        ],
-        response_format: { type: "json_object" },
+        },
       }),
     });
 
-    if (!res.ok) {
+    if (!res.ok || !res.body) {
       if (res.status === 429) throw new Error("För många AI-förfrågningar, försök om en stund.");
       if (res.status === 402) throw new Error("AI-krediter saknas i arbetsytan.");
+      if (res.status === 403) throw new Error("AI är blockerat i arbetsytan.");
       throw new Error("AI-analysen misslyckades.");
     }
 
-    const json = (await res.json()) as any;
-    const content = json?.choices?.[0]?.message?.content ?? "{}";
+    // Reasoning-modeller måste strömmas; vi samlar texten på servern.
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = "";
+    let content = "";
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split("\n");
+      buffer = lines.pop() ?? "";
+      for (const line of lines) {
+        if (!line.startsWith("data:")) continue;
+        const payload = line.slice(5).trim();
+        if (!payload || payload === "[DONE]") continue;
+        try {
+          const evt = JSON.parse(payload) as any;
+          if (evt.type === "response.output_text.delta" && typeof evt.delta === "string") {
+            content += evt.delta;
+          } else if (evt.type === "response.completed" && !content) {
+            content = evt.response?.output_text ?? "";
+          }
+        } catch {
+          // ignorera ofullständiga event
+        }
+      }
+    }
+    if (!content.trim()) throw new Error("AI-analysen gav inget svar, försök igen.");
+
     const parsed = schema.parse(JSON.parse(content));
 
     await supabaseAdmin
