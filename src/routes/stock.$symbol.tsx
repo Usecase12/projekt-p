@@ -158,7 +158,7 @@ function StockPage() {
             ].map(([k, v]) => (
               <div key={k as string} className="flex items-center justify-between py-2">
                 <dt className="text-muted-foreground">{k}</dt>
-                <dd className="num font-medium">{v}</dd>
+                <dd className="num max-w-[60%] text-right font-medium break-words">{v}</dd>
               </div>
             ))}
           </dl>
