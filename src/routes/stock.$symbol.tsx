@@ -68,8 +68,8 @@ function StockPage() {
     <Shell>
       <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
         <div>
-          <Link to="/" className="text-xs text-muted-foreground hover:text-foreground">
-            ← Dashboard
+          <Link to="/" className="text-xs text-muted-foreground hover:text-primary">
+            ← 📊 Tillbaka till dashboarden
           </Link>
           <h1 className="mt-1 text-xl font-semibold tracking-tight">
             {a.symbol} <span className="text-muted-foreground">· {a.name}</span>
@@ -90,7 +90,7 @@ function StockPage() {
       </div>
 
       <div className="grid gap-4 lg:grid-cols-3">
-        <Card title="Kursutveckling 180 dagar (pris vs SMA50)" className="lg:col-span-2">
+        <Card title="📈 Kursutveckling 180 dagar (pris vs SMA50)" className="lg:col-span-2">
           <div className="h-64">
             <ClientOnly fallback={<div className="h-full rounded bg-muted/40" />}>
               <ResponsiveContainer width="100%" height="100%">
@@ -139,7 +139,7 @@ function StockPage() {
           </div>
         </Card>
 
-        <Card title="Signal och nivåer">
+        <Card title="🎯 Signal och nivåer">
           <div className="mb-3 flex items-center gap-2">
             <SignalBadge signal={a.signal} />
             <span className="text-sm text-muted-foreground">
@@ -162,12 +162,12 @@ function StockPage() {
           </dl>
           <p className="mt-3 text-xs text-muted-foreground">
             {a.r >= 3
-              ? "R uppfyller kravet 1:3."
-              : "R är under 1:3 – ingen LONG-signal ges i detta läge."}
+              ? "✅ R uppfyller kravet 1:3."
+              : "⚠️ R är under 1:3 – ingen LONG-signal ges i detta läge."}
           </p>
         </Card>
 
-        <Card title="Indikatorer">
+        <Card title="📊 Indikatorer">
           <dl className="divide-y divide-border text-sm">
             {[
               ["SMA50", a.sma50 ?? "-"],
@@ -186,7 +186,7 @@ function StockPage() {
           </dl>
         </Card>
 
-        <Card title="P-strategi">
+        <Card title="🧭 P-strategi">
           <ul className="space-y-2 text-sm">
             {a.criteria.map((c) => (
               <li key={c.label} className="flex items-start justify-between gap-3">
@@ -199,7 +199,7 @@ function StockPage() {
           </ul>
         </Card>
 
-        <Card title="Fundamenta">
+        <Card title="💰 Fundamenta">
           <dl className="divide-y divide-border text-sm">
             {[
               ["Börsvärde", fmtBig(f?.marketCap ?? null)],
