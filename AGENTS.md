@@ -8,3 +8,5 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+AI-bedömd swinghorisont lagras i dagens AI-consensus och visas intill uppsidan; gamla cachade svar utan horisont hämtas om för att undvika en missvisande schablon.
