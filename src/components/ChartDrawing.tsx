@@ -182,6 +182,35 @@ export function ChartDrawing({ storageKey, children }: { storageKey: string; chi
                       />
                     ))
                   : null}
+                {mode === "edit" && selected === it.id ? (
+                  <g
+                    style={{ cursor: "pointer" }}
+                    onPointerDown={(e) => {
+                      e.stopPropagation();
+                      remove(it.id);
+                    }}
+                  >
+                    <circle
+                      cx={`${(it.x1 + it.x2) / 2}%`}
+                      cy={`${(it.y1 + it.y2) / 2}%`}
+                      r={9}
+                      fill="var(--color-destructive)"
+                      pointerEvents="all"
+                    />
+                    <text
+                      x={`${(it.x1 + it.x2) / 2}%`}
+                      y={`${(it.y1 + it.y2) / 2}%`}
+                      fill="var(--color-destructive-foreground)"
+                      fontSize={11}
+                      fontWeight="bold"
+                      textAnchor="middle"
+                      dominantBaseline="central"
+                      pointerEvents="none"
+                    >
+                      ✕
+                    </text>
+                  </g>
+                ) : null}
               </g>
             ) : null,
           )}
@@ -205,6 +234,19 @@ export function ChartDrawing({ storageKey, children }: { storageKey: string; chi
               }}
             >
               📝 {it.text}
+              {mode === "edit" && selected === it.id ? (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    remove(it.id);
+                  }}
+                  onPointerDown={(e) => e.stopPropagation()}
+                  title="Ta bort anteckningen"
+                  className="ml-1 rounded-full bg-destructive px-1.5 text-[10px] leading-4 text-destructive-foreground hover:opacity-80"
+                >
+                  ✕
+                </button>
+              ) : null}
             </div>
           ) : null,
         )}
