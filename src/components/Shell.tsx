@@ -46,7 +46,7 @@ const SIGNAL_EMOJI: Record<string, string> = {
 };
 
 export function signalEmoji(signal: string) {
-  return SIGNAL_EMOJI[signal] ?? SIGNAL_EMOJI.NEUTRAL;
+  return SIGNAL_EMOJI[signal] ?? SIGNAL_EMOJI["NEUTRAL"];
 }
 
 export function SignalBadge({ signal, className = "" }: { signal: string; className?: string }) {
