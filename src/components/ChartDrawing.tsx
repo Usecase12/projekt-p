@@ -234,6 +234,19 @@ export function ChartDrawing({ storageKey, children }: { storageKey: string; chi
               }}
             >
               📝 {it.text}
+              {mode === "edit" && selected === it.id ? (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    remove(it.id);
+                  }}
+                  onPointerDown={(e) => e.stopPropagation()}
+                  title="Ta bort anteckningen"
+                  className="ml-1 rounded-full bg-destructive px-1.5 text-[10px] leading-4 text-destructive-foreground hover:opacity-80"
+                >
+                  ✕
+                </button>
+              ) : null}
             </div>
           ) : null,
         )}
