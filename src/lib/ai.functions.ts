@@ -47,7 +47,7 @@ export const getAiConsensus = createServerFn({ method: "POST" })
     const { fetchChart, fetchFundamentals } = await import("./market.server");
     const { analyse } = await import("./stocks");
     const [chart, fundamentals] = await Promise.all([
-      fetchChart(symbol, "1y"),
+      fetchChart(symbol, 420),
       fetchFundamentals(symbol),
     ]);
     if (!chart) throw new Error(`Ingen kursdata för ${symbol}`);
