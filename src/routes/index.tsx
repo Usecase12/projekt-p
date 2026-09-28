@@ -38,11 +38,11 @@ function Dashboard() {
   return (
     <Shell>
       <div className="mb-5">
-        <h1 className="text-xl font-semibold tracking-tight">Nasdaq 100 – dagens läge</h1>
+        <h1 className="text-xl font-semibold tracking-tight">📊 Nasdaq 100 – dagens läge</h1>
         <p className="mt-1 text-sm text-muted-foreground">
           {isLoading
-            ? "Hämtar senaste kursnivåer…"
-            : `${rows.length} aktier analyserade · uppdaterad ${data ? data.updatedAt.slice(0, 16).replace("T", " ") : ""} UTC`}
+            ? "⏳ Hämtar senaste kursnivåer…"
+            : `✅ ${rows.length} aktier analyserade · uppdaterad ${data ? data.updatedAt.slice(0, 16).replace("T", " ") : ""} UTC`}
         </p>
       </div>
 
@@ -85,7 +85,7 @@ function Dashboard() {
                 ))
               : null}
             {rows.map((r) => (
-              <tr key={r.symbol} className="border-b border-border/60 last:border-0 hover:bg-muted/40">
+              <tr key={r.symbol} className="border-b border-border/60 last:border-0 transition-colors hover:bg-primary/5">
                 <td className="px-3 py-2">
                   <Link
                     to="/stock/$symbol"
@@ -132,7 +132,8 @@ function Dashboard() {
       </div>
 
       <p className="mt-3 text-xs text-muted-foreground">
-        LONG kräver intakt trend, minst 4 av 6 kriterier i P-strategin och R minst 1:3.
+        💡 LONG kräver intakt trend, minst 4 av 6 kriterier i P-strategin och R minst 1:3. Klicka
+        på en aktie för full analys.
       </p>
     </Shell>
   );
