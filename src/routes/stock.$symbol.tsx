@@ -68,8 +68,8 @@ function StockPage() {
     <Shell>
       <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
         <div>
-          <Link to="/" className="text-xs text-muted-foreground hover:text-foreground">
-            ← Dashboard
+          <Link to="/" className="text-xs text-muted-foreground hover:text-primary">
+            ← 📊 Tillbaka till dashboarden
           </Link>
           <h1 className="mt-1 text-xl font-semibold tracking-tight">
             {a.symbol} <span className="text-muted-foreground">· {a.name}</span>
@@ -90,7 +90,7 @@ function StockPage() {
       </div>
 
       <div className="grid gap-4 lg:grid-cols-3">
-        <Card title="Kursutveckling 180 dagar (pris vs SMA50)" className="lg:col-span-2">
+        <Card title="📈 Kursutveckling 180 dagar (pris vs SMA50)" className="lg:col-span-2">
           <div className="h-64">
             <ClientOnly fallback={<div className="h-full rounded bg-muted/40" />}>
               <ResponsiveContainer width="100%" height="100%">
@@ -139,7 +139,7 @@ function StockPage() {
           </div>
         </Card>
 
-        <Card title="Signal och nivåer">
+        <Card title="🎯 Signal och nivåer">
           <div className="mb-3 flex items-center gap-2">
             <SignalBadge signal={a.signal} />
             <span className="text-sm text-muted-foreground">
@@ -162,12 +162,12 @@ function StockPage() {
           </dl>
           <p className="mt-3 text-xs text-muted-foreground">
             {a.r >= 3
-              ? "R uppfyller kravet 1:3."
-              : "R är under 1:3 – ingen LONG-signal ges i detta läge."}
+              ? "✅ R uppfyller kravet 1:3."
+              : "⚠️ R är under 1:3 – ingen LONG-signal ges i detta läge."}
           </p>
         </Card>
 
-        <Card title="Indikatorer">
+        <Card title="📊 Indikatorer">
           <dl className="divide-y divide-border text-sm">
             {[
               ["SMA50", a.sma50 ?? "-"],
@@ -186,7 +186,7 @@ function StockPage() {
           </dl>
         </Card>
 
-        <Card title="P-strategi">
+        <Card title="🧭 P-strategi">
           <ul className="space-y-2 text-sm">
             {a.criteria.map((c) => (
               <li key={c.label} className="flex items-start justify-between gap-3">
@@ -199,7 +199,7 @@ function StockPage() {
           </ul>
         </Card>
 
-        <Card title="Fundamenta">
+        <Card title="💰 Fundamenta">
           <dl className="divide-y divide-border text-sm">
             {[
               ["Börsvärde", fmtBig(f?.marketCap ?? null)],
@@ -219,22 +219,22 @@ function StockPage() {
           </dl>
         </Card>
 
-        <Card title="AI Consensus" className="lg:col-span-3">
+        <Card title="🤖 AI Consensus" className="lg:col-span-3">
           {!ai.data ? (
             <div className="flex flex-wrap items-center gap-3">
               <button
                 onClick={() => ai.mutate()}
                 disabled={ai.isPending}
-                className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-60"
+                className="rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 disabled:opacity-60"
               >
-                {ai.isPending ? "AI-teamet analyserar…" : "Kör AI-teamets analys"}
+                {ai.isPending ? "🧠 AI-teamet analyserar…" : "🤖 Kör AI-teamets analys"}
               </button>
               <span className="text-xs text-muted-foreground">
                 Ett samlat anrop per aktie och dag – resultatet sparas för att hålla nere
                 tokenanvändningen.
               </span>
               {ai.isError ? (
-                <span className="text-sm text-destructive">{(ai.error as Error).message}</span>
+                <span className="text-sm text-destructive">😕 {(ai.error as Error).message}</span>
               ) : null}
             </div>
           ) : (
@@ -249,13 +249,13 @@ function StockPage() {
               <p className="text-sm">{ai.data.summary}</p>
               <div className="grid gap-3 md:grid-cols-2">
                 {[
-                  ["Technical Analyst", ai.data.technical],
-                  ["Equity Research", ai.data.research],
-                  ["Macro Strategist", ai.data.macro],
-                  ["Risk Manager", ai.data.risk],
-                  ["Portfolio Manager", ai.data.verdict + " – " + ai.data.summary],
+                  ["📈 Technical Analyst", ai.data.technical],
+                  ["🔍 Equity Research", ai.data.research],
+                  ["🌍 Macro Strategist", ai.data.macro],
+                  ["🛡️ Risk Manager", ai.data.risk],
+                  ["🎯 Portfolio Manager", ai.data.verdict + " – " + ai.data.summary],
                 ].map(([role, text]) => (
-                  <div key={role} className="rounded-md border border-border bg-background p-3">
+                  <div key={role} className="rounded-xl border border-border bg-muted/40 p-3">
                     <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                       {role}
                     </div>

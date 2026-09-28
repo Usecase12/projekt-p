@@ -30,7 +30,7 @@ function History() {
     <Shell>
       <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-xl font-semibold tracking-tight">Historik</h1>
+          <h1 className="text-xl font-semibold tracking-tight">🕘 Historik</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             En rad sparas per aktie och dag när analysen körs.
           </p>
@@ -50,9 +50,9 @@ function History() {
       </div>
 
       {isLoading ? (
-        <p className="text-sm text-muted-foreground">Hämtar historik…</p>
+        <p className="text-sm text-muted-foreground">⏳ Hämtar historik…</p>
       ) : !data?.length ? (
-        <p className="text-sm text-muted-foreground">Ingen historik sparad ännu.</p>
+        <p className="text-sm text-muted-foreground">📭 Ingen historik sparad ännu.</p>
       ) : (
         <div className="overflow-x-auto rounded-lg border border-border bg-card">
           <table className="w-full min-w-[760px] text-sm">

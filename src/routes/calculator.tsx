@@ -79,9 +79,13 @@ function Calculator() {
 
   return (
     <Shell>
-      <h1 className="mb-5 text-xl font-semibold tracking-tight">Trading Calculator</h1>
+      <h1 className="mb-5 text-xl font-semibold tracking-tight">🧮 Trading Calculator</h1>
+      <p className="mb-5 text-sm text-muted-foreground">
+        Räkna ut positionsstorlek och risk – välj belopp, nivåer och se direkt om din trade håller
+        1:3-kravet.
+      </p>
       <div className="grid gap-4 md:grid-cols-2">
-        <Card title="Indata">
+        <Card title="✏️ Indata">
           <div className="grid gap-3 sm:grid-cols-2">
             <Field label="Kapital" value={capital} onChange={setCapital} suffix="USD" />
             <Field label="Risk" value={riskPct} onChange={setRiskPct} suffix="%" />
@@ -91,10 +95,10 @@ function Calculator() {
           </div>
         </Card>
 
-        <Card title="Resultat">
+        <Card title="🎯 Resultat">
           {!result ? (
             <p className="text-sm text-muted-foreground">
-              Fyll i kapital, risk och nivåer. SL måste ligga under IN.
+              💡 Fyll i kapital, risk och nivåer. SL måste ligga under IN.
             </p>
           ) : (
             <>
@@ -115,15 +119,15 @@ function Calculator() {
                 ))}
               </dl>
               <div
-                className={`mt-4 rounded-md border px-3 py-2 text-sm font-medium ${
+                className={`mt-4 rounded-xl border px-3 py-2 text-sm font-medium ${
                   result.r >= 3
                     ? "border-success/30 bg-success/10 text-success"
                     : "border-warning/30 bg-warning/10 text-warning"
                 }`}
               >
                 {result.r >= 3
-                  ? "R är minst 1:3 – uppfyller kravet."
-                  : "R är under 1:3 – uppfyller inte kravet."}
+                  ? "✅ R är minst 1:3 – uppfyller kravet."
+                  : "⚠️ R är under 1:3 – uppfyller inte kravet."}
               </div>
             </>
           )}
