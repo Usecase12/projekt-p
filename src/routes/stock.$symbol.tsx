@@ -249,13 +249,13 @@ function StockPage() {
               <p className="text-sm">{ai.data.summary}</p>
               <div className="grid gap-3 md:grid-cols-2">
                 {[
-                  ["Technical Analyst", ai.data.technical],
-                  ["Equity Research", ai.data.research],
-                  ["Macro Strategist", ai.data.macro],
-                  ["Risk Manager", ai.data.risk],
-                  ["Portfolio Manager", ai.data.verdict + " – " + ai.data.summary],
+                  ["📈 Technical Analyst", ai.data.technical],
+                  ["🔍 Equity Research", ai.data.research],
+                  ["🌍 Macro Strategist", ai.data.macro],
+                  ["🛡️ Risk Manager", ai.data.risk],
+                  ["🎯 Portfolio Manager", ai.data.verdict + " – " + ai.data.summary],
                 ].map(([role, text]) => (
-                  <div key={role} className="rounded-md border border-border bg-background p-3">
+                  <div key={role} className="rounded-xl border border-border bg-muted/40 p-3">
                     <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                       {role}
                     </div>
