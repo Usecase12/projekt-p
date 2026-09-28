@@ -144,7 +144,7 @@ function StockPage() {
           <div className="mb-3 flex items-center gap-2">
             <SignalBadge signal={a.signal} />
             <span className="text-sm text-muted-foreground">
-              {a.criteriaMet}/6 kriterier · {a.horizon}
+              {a.criteriaMet}/6 kriterier
             </span>
           </div>
           <dl className="divide-y divide-border text-sm">
@@ -153,7 +153,8 @@ function StockPage() {
               ["SL", a.stopLoss],
               ["TP", a.takeProfit],
               ["R", `1:${a.r}`],
-              ["Uppsida", `${a.upsidePct}%`],
+              ["Uppsida", `${a.upsidePct > 0 ? "+" : ""}${a.upsidePct}%`],
+              ["Horisont", ai.data?.horizon ?? (ai.isPending ? "Bedöms…" : "Kör AI-analys")],
             ].map(([k, v]) => (
               <div key={k as string} className="flex items-center justify-between py-2">
                 <dt className="text-muted-foreground">{k}</dt>

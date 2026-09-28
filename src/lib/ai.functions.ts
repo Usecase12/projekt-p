@@ -9,6 +9,7 @@ export type AiConsensus = {
   verdict: string;
   conviction: number;
   summary: string;
+  horizon: string;
   cached: boolean;
   date: string;
 };
@@ -21,6 +22,7 @@ const schema = z.object({
   verdict: z.string(),
   conviction: z.number(),
   summary: z.string(),
+  horizon: z.enum(["1–2 veckor", "2–3 veckor", "2–4 veckor", "3–4 veckor", "Ej rimlig inom 4 veckor"]),
 });
 
 /**
@@ -40,8 +42,9 @@ export const getAiConsensus = createServerFn({ method: "POST" })
       .eq("symbol", symbol)
       .eq("trade_date", today)
       .maybeSingle();
-    if (cached.data?.payload) {
-      return { ...(cached.data.payload as z.infer<typeof schema>), cached: true, date: today };
+    const cachedAnalysis = schema.safeParse(cached.data?.payload);
+    if (cachedAnalysis.success) {
+      return { ...cachedAnalysis.data, cached: true, date: today };
     }
 
     const { fetchChart, fetchFundamentals } = await import("./market.server");
@@ -79,7 +82,7 @@ export const getAiConsensus = createServerFn({ method: "POST" })
         stream: true,
         reasoning: { effort: "low", summary: "auto" },
         instructions:
-          "Du är ett AI-team för aktieanalys: Technical Analyst (P-strategi), Equity Research Analyst (fundamenta/värdering), Macro Strategist (marknad, sektor, makro), Risk Manager (risk, IN/SL/TP, R) och Portfolio Manager (sammanvägning). Svara på svenska, extremt koncist: max 2 meningar per roll. verdict = LONG, WATCH, NEUTRAL eller AVOID. conviction = heltal 1-10. summary = en mening.",
+          "Du är ett AI-team för aktieanalys: Technical Analyst (P-strategi), Equity Research Analyst (fundamenta/värdering), Macro Strategist (marknad, sektor, makro), Risk Manager (risk, IN/SL/TP, R) och Portfolio Manager (sammanvägning). Svara på svenska, extremt koncist: max 2 meningar per roll. verdict = LONG, WATCH, NEUTRAL eller AVOID. conviction = heltal 1-10. summary = en mening. horizon = din realistiska bedömning av hur lång tid det befintliga TP-målet och den angivna uppsidan kan ta för ett swingtrade; välj en veckobaserad tidsram inom cirka 4 veckor. Om målet inte är rimligt inom 4 veckor välj 'Ej rimlig inom 4 veckor'. Ändra inte mål, nivåer eller signalregler för att passa tidsramen.",
         input: facts,
         text: {
           format: {
@@ -97,6 +100,7 @@ export const getAiConsensus = createServerFn({ method: "POST" })
                 verdict: { type: "string", enum: ["LONG", "WATCH", "NEUTRAL", "AVOID"] },
                 conviction: { type: "integer" },
                 summary: { type: "string" },
+                 horizon: { type: "string", enum: ["1–2 veckor", "2–3 veckor", "2–4 veckor", "3–4 veckor", "Ej rimlig inom 4 veckor"] },
               },
               required: [
                 "technical",
@@ -106,6 +110,7 @@ export const getAiConsensus = createServerFn({ method: "POST" })
                 "verdict",
                 "conviction",
                 "summary",
+                 "horizon",
               ],
             },
           },
