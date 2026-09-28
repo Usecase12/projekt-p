@@ -3,6 +3,7 @@ import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { Area, AreaChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
+import { ChartDrawing } from "@/components/ChartDrawing";
 import { Card, Shell, SignalBadge } from "@/components/Shell";
 import { getAiConsensus } from "@/lib/ai.functions";
 import { stockQuery } from "@/lib/queries";
@@ -91,7 +92,7 @@ function StockPage() {
 
       <div className="grid gap-4 lg:grid-cols-3">
         <Card title="📈 Kursutveckling 180 dagar (pris vs SMA50)" className="lg:col-span-2">
-          <div className="h-64">
+          <ChartDrawing storageKey={a.symbol}>
             <ClientOnly fallback={<div className="h-full rounded bg-muted/40" />}>
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={chartData} margin={{ top: 5, right: 5, bottom: 0, left: 0 }}>
@@ -136,7 +137,7 @@ function StockPage() {
                 </AreaChart>
               </ResponsiveContainer>
             </ClientOnly>
-          </div>
+          </ChartDrawing>
         </Card>
 
         <Card title="🎯 Signal och nivåer">
