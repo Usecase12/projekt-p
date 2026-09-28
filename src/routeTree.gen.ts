@@ -13,7 +13,6 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as CalculatorRouteImport } from './routes/calculator'
 import { Route as HistoryRouteImport } from './routes/history'
 import { Route as StockSymbolRouteImport } from './routes/stock.$symbol'
-import { Route as ApiPublicDebugFetchRouteImport } from './routes/api/public/debug-fetch'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -35,25 +34,18 @@ const StockSymbolRoute = StockSymbolRouteImport.update({
   path: '/stock/$symbol',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPublicDebugFetchRoute = ApiPublicDebugFetchRouteImport.update({
-  id: '/api/public/debug-fetch',
-  path: '/api/public/debug-fetch',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/calculator': typeof CalculatorRoute
   '/history': typeof HistoryRoute
   '/stock/$symbol': typeof StockSymbolRoute
-  '/api/public/debug-fetch': typeof ApiPublicDebugFetchRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/calculator': typeof CalculatorRoute
   '/history': typeof HistoryRoute
   '/stock/$symbol': typeof StockSymbolRoute
-  '/api/public/debug-fetch': typeof ApiPublicDebugFetchRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -61,30 +53,13 @@ export interface FileRoutesById {
   '/calculator': typeof CalculatorRoute
   '/history': typeof HistoryRoute
   '/stock/$symbol': typeof StockSymbolRoute
-  '/api/public/debug-fetch': typeof ApiPublicDebugFetchRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | '/calculator'
-    | '/history'
-    | '/stock/$symbol'
-    | '/api/public/debug-fetch'
+  fullPaths: '/' | '/calculator' | '/history' | '/stock/$symbol'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/calculator'
-    | '/history'
-    | '/stock/$symbol'
-    | '/api/public/debug-fetch'
-  id:
-    | '__root__'
-    | '/'
-    | '/calculator'
-    | '/history'
-    | '/stock/$symbol'
-    | '/api/public/debug-fetch'
+  to: '/' | '/calculator' | '/history' | '/stock/$symbol'
+  id: '__root__' | '/' | '/calculator' | '/history' | '/stock/$symbol'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -92,7 +67,6 @@ export interface RootRouteChildren {
   CalculatorRoute: typeof CalculatorRoute
   HistoryRoute: typeof HistoryRoute
   StockSymbolRoute: typeof StockSymbolRoute
-  ApiPublicDebugFetchRoute: typeof ApiPublicDebugFetchRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -125,13 +99,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StockSymbolRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/debug-fetch': {
-      id: '/api/public/debug-fetch'
-      path: '/api/public/debug-fetch'
-      fullPath: '/api/public/debug-fetch'
-      preLoaderRoute: typeof ApiPublicDebugFetchRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
@@ -140,7 +107,6 @@ const rootRouteChildren: RootRouteChildren = {
   CalculatorRoute: CalculatorRoute,
   HistoryRoute: HistoryRoute,
   StockSymbolRoute: StockSymbolRoute,
-  ApiPublicDebugFetchRoute: ApiPublicDebugFetchRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
