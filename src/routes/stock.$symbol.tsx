@@ -219,22 +219,22 @@ function StockPage() {
           </dl>
         </Card>
 
-        <Card title="AI Consensus" className="lg:col-span-3">
+        <Card title="🤖 AI Consensus" className="lg:col-span-3">
           {!ai.data ? (
             <div className="flex flex-wrap items-center gap-3">
               <button
                 onClick={() => ai.mutate()}
                 disabled={ai.isPending}
-                className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-60"
+                className="rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 disabled:opacity-60"
               >
-                {ai.isPending ? "AI-teamet analyserar…" : "Kör AI-teamets analys"}
+                {ai.isPending ? "🧠 AI-teamet analyserar…" : "🤖 Kör AI-teamets analys"}
               </button>
               <span className="text-xs text-muted-foreground">
                 Ett samlat anrop per aktie och dag – resultatet sparas för att hålla nere
                 tokenanvändningen.
               </span>
               {ai.isError ? (
-                <span className="text-sm text-destructive">{(ai.error as Error).message}</span>
+                <span className="text-sm text-destructive">😕 {(ai.error as Error).message}</span>
               ) : null}
             </div>
           ) : (
